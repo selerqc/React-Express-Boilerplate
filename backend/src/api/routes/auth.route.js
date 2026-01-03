@@ -1,16 +1,10 @@
 import { Router } from 'express'
 import authService from '../../services/auth.service.js'
 import isAuth from '../middlewares/isAuth.js'
+import config from '../../config/index.js'
 
 const router = Router()
 
-// Cookie options for JWT token
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-}
 
 router.post('/register', async (req, res, next) => {
   try {
@@ -23,7 +17,7 @@ router.post('/register', async (req, res, next) => {
     }
 
     const result = await authService.register({ name, email, password })
-    res.cookie('token', result.token, cookieOptions)
+    res.cookie('token', result.token, config.cookieOptions)
     res.status(201).json({ success: true, user: result.user })
   } catch (error) {
     next(error)
@@ -41,7 +35,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     const result = await authService.login({ email, password })
-    res.cookie('token', result.token, cookieOptions)
+    res.cookie('token', result.token, config.cookieOptions)
     res.json({ success: true, user: result.user })
   } catch (error) {
     next(error)
@@ -49,7 +43,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', cookieOptions)
+  res.clearCookie('token', config.cookieOptions)
   res.json({ success: true, message: 'Logged out successfully' })
 })
 

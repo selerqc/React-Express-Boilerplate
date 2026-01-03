@@ -12,6 +12,12 @@ const config = {
   api: {
     prefix: process.env.API_PREFIX || '/api',
   },
+  cookieOptions: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  },
   logs: {
     level: process.env.LOG_LEVEL || 'debug',
   },
